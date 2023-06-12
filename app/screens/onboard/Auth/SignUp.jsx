@@ -10,14 +10,13 @@ import {
   Button,
 } from "native-base";
 
-import { View } from "react-native-ui-lib";
 import { useState } from "react";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { useDispatch } from "react-redux";
 import { LoginUser } from "../../../store/UserActions";
-import CutsomTheme from "../../../constants/theme";
+import CustomTheme from "../../../constants/theme";
 
-const LoginScreen = ({ navigation }) => {
+const SignUp = ({ navigation }) => {
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
   const [value, setValue] = useState("Teacher");
@@ -29,11 +28,21 @@ const LoginScreen = ({ navigation }) => {
     <NativeBaseProvider>
       <Center px="3" padding={"10"} mt={"10"}>
         <Text pt={"20"} style={{ fontSize: 50 }}>
-          Login Screen{" "}
+          SignUp Screen{" "}
         </Text>
         <Text> Open Account, Enjoy Learning </Text>
 
         <Center px={"10"}>
+          <Box alignItems="center" pt={"10"}>
+            <Input
+              mx="3"
+              placeholder="userName"
+              value={userName}
+              onChangeText={setuserName}
+              w="100%"
+            />
+          </Box>
+
           <Box alignItems="center" pt={"10"}>
             <Input
               mx="3"
@@ -43,6 +52,7 @@ const LoginScreen = ({ navigation }) => {
               w="100%"
             />
           </Box>
+
           <Box alignItems="center" pt={"10"}>
             <Input
               mx="3"
@@ -55,46 +65,15 @@ const LoginScreen = ({ navigation }) => {
           </Box>
         </Center>
 
-        <Radio.Group
-          name="myRadioGroup"
-          accessibilityLabel="favorite number"
-          value={value}
-          onChange={(nextValue) => {
-            setValue(nextValue);
-          }}
-        >
-          <Stack
-            direction={{
-              base: "row",
-              md: "row",
-            }}
-            alignItems={{
-              base: "flex-start",
-              md: "center",
-            }}
-            space={4}
-            w="75%"
-            maxW="300px"
-            mt={"15"}
-          >
-            <Radio shadow={2} value="Teacher" my="2">
-              Teacher
-            </Radio>
-            <Radio shadow={2} value="Student" my="2">
-              Student
-            </Radio>
-          </Stack>
-        </Radio.Group>
-
         <Button
           mt={"10"}
           px={"20"}
           py={"15"}
-          style={{ color: CutsomTheme.buttonText }}
+          style={{ color: CustomTheme.buttonText }}
           borderRadius={"lg"}
           onPress={() => {}}
         >
-          Login
+          Sign Up
         </Button>
 
         <Stack
@@ -161,7 +140,7 @@ const LoginScreen = ({ navigation }) => {
   );
 };
 
-export default LoginScreen;
+export default SignUp;
 
 const styles = StyleSheet.create({
   container: {
