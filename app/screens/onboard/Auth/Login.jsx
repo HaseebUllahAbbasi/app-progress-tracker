@@ -9,14 +9,35 @@ import {
   Stack,
   Button,
 } from "native-base";
+import * as Notifications from "expo-notifications";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { useDispatch } from "react-redux";
 import { LoginUser } from "../../../store/UserActions";
 import CustomTheme from "../../../constants/theme";
+import { testServer } from "../../../services/apis";
 
 const Login = ({ navigation }) => {
+  useEffect(() => {
+    // Request permission to send push notifications
+    const requestNotificationPermission = async () => {
+      const { status } = await Notifications.requestPermissionsAsync();
+      if (status !== "granted") {
+        console.log("Permission to receive push notifications denied");
+      }
+    };
+
+    // Get the Expo Push Token
+    const getExpoPushToken = async () => {
+      const expoPushToken = (await Notifications.getExpoPushTokenAsync()).data;
+      console.log("Expo Push Token:", expoPushToken);
+    };
+
+    // Call the functions to request permission and get the token
+    // requestNotificationPermission();
+    // getExpoPushToken();
+  }, []);
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
   const [value, setValue] = useState("Teacher");
@@ -60,7 +81,11 @@ const Login = ({ navigation }) => {
           py={"15"}
           style={{ color: CustomTheme.buttonText }}
           borderRadius={"lg"}
-          onPress={() => {}}
+          onPress={() => {
+            //       const response = await axios.post(SERVER + '/api/users/login', { username, password });
+
+            navigation.navigate("Home");
+          }}
         >
           Login
         </Button>

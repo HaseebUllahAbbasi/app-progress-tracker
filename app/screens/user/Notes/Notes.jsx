@@ -8,13 +8,77 @@ import {
   NativeBaseProvider,
   Stack,
   Button,
+  Card,
 } from "native-base";
+import { ColorPicker } from "react-native-ui-lib";
+import { useState } from "react";
+import { ScrollView } from "react-native-gesture-handler";
 
-const Notes = () => {
+const Notes = ({ navigation, route }) => {
+  const [title, setTitle] = useState("");
+
+  const [desc, setDesc] = useState([]);
+  const [color, setColor] = useState("#fffffa");
+
+  function changeValue(value, index) {
+    const updatedDesc = [...desc];
+    updatedDesc[index] = value;
+    setDesc(updatedDesc);
+  }
+
+  const [data, setData] = useState([
+    {
+      user: "user1",
+      heading: "Todo List 1",
+      items: ["Item 1", "Item 2", "Item 3"],
+      color: "#fa00af",
+      createdAt: new Date(),
+    },
+    {
+      user: "user2",
+      heading: "Todo List 2",
+      items: ["Item A", "Item B", "Item C"],
+      color: "#ffaaaf",
+      createdAt: new Date(),
+    },
+    {
+      user: "user1",
+      heading: "Todo List 3",
+      items: ["Task 1", "Task 2", "Task 3"],
+      color: "#ffffaf",
+      createdAt: new Date(),
+    },
+  ]);
+
   return (
     <NativeBaseProvider>
       <Center px="3" padding={"10"} mt={"10"}>
         <Text>Notes Screen</Text>
+        <Button
+          onPress={() => {
+            navigation.navigate("addNote");
+          }}
+        >
+          Add Note
+        </Button>
+        <ScrollView>
+          {data.map((item, index) => (
+            <Card
+              key={index}
+              width={"350"}
+              backgroundColor={item.color}
+              my={"2"}
+              mx={"1"}
+            >
+              <Text textAlign={"center"}>{item.heading}</Text>
+              <Box mx={"3"}>
+                {item.items.map((subItem, subIndex) => (
+                  <Text key={subIndex}> - {subItem}</Text>
+                ))}
+              </Box>
+            </Card>
+          ))}
+        </ScrollView>
       </Center>
     </NativeBaseProvider>
   );
