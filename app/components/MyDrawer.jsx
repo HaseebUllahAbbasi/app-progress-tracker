@@ -10,9 +10,9 @@ export function MainDrawer(props) {
     <Drawer.Navigator
       drawerContent={(props) => <CustomDrawer {...props} />}
       useLegacyImplementation={true}
-      initialRouteName="Home"
+      initialRouteName="Main"
     >
-      <Drawer.Screen name="Home" component={MainScreen} />
+      <Drawer.Screen name="Main" component={MainScreen} />
 
       <Drawer.Screen name="Hourly" component={HourlyStack} />
       <Drawer.Screen name="Todo" component={TodoStack} />
