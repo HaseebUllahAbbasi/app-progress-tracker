@@ -20,7 +20,7 @@ import { useDispatch, useSelector } from "react-redux";
 const CustomDrawer = (props) => {
   const dispatch = useDispatch();
   const userPic = "man.png";
-  const accout = useSelector((state) => state?.account);
+  const accout = useSelector((state) => state?.user);
   const onShare = async () => {
     try {
       const result = await Share.share({

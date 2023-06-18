@@ -16,28 +16,9 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 import { useDispatch } from "react-redux";
 import { LoginUser } from "../../../store/UserActions";
 import CustomTheme from "../../../constants/theme";
-import { testServer } from "../../../services/apis";
+import { login, testServer } from "../../../services/apis";
 
 const Login = ({ navigation }) => {
-  useEffect(() => {
-    // Request permission to send push notifications
-    const requestNotificationPermission = async () => {
-      const { status } = await Notifications.requestPermissionsAsync();
-      if (status !== "granted") {
-        console.log("Permission to receive push notifications denied");
-      }
-    };
-
-    // Get the Expo Push Token
-    const getExpoPushToken = async () => {
-      const expoPushToken = (await Notifications.getExpoPushTokenAsync()).data;
-      console.log("Expo Push Token:", expoPushToken);
-    };
-
-    // Call the functions to request permission and get the token
-    // requestNotificationPermission();
-    // getExpoPushToken();
-  }, []);
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
   const [value, setValue] = useState("Teacher");
@@ -57,9 +38,9 @@ const Login = ({ navigation }) => {
           <Box alignItems="center" pt={"10"}>
             <Input
               mx="3"
-              placeholder="Email"
-              value={email}
-              onChangeText={setEmail}
+              placeholder="username"
+              value={userName}
+              onChangeText={setuserName}
               w="100%"
             />
           </Box>
@@ -81,10 +62,15 @@ const Login = ({ navigation }) => {
           py={"15"}
           style={{ color: CustomTheme.buttonText }}
           borderRadius={"lg"}
-          onPress={() => {
-            //       const response = await axios.post(SERVER + '/api/users/login', { username, password });
-
-            navigation.navigate("Home");
+          onPress={async () => {
+            const data = await login(userName, password);
+            if (data) {
+              console.log(data);
+              dispatch(
+                LoginUser(data._id, data.email, data.username, data?.token)
+              );
+              navigation.navigate("Home");
+            }
           }}
         >
           Login

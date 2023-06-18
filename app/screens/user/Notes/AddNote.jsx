@@ -1,60 +1,126 @@
-import { StyleSheet, Alert, ActivityIndicator } from "react-native";
+import { useEffect, useState } from "react";
 import {
-  Input,
-  Radio,
-  Box,
-  Text,
-  Center,
   NativeBaseProvider,
-  Stack,
+  ScrollView,
+  Box,
+  Center,
+  Input,
   Button,
+  Divider,
+  Text,
 } from "native-base";
-import { ColorPicker, Picker } from "react-native-ui-lib";
-import { useState } from "react";
+import { io } from "socket.io-client";
+import axios from "axios";
+import { Card, ColorPicker } from "react-native-ui-lib";
+import { SERVER, createNote } from "../../../services/apis";
+import { useDispatch, useSelector } from "react-redux";
 
 const AddNote = () => {
+  const user = useSelector((state) => state?.user);
   const [title, setTitle] = useState("");
   const [desc, setDesc] = useState([""]);
+  const socket = io(SERVER);
+  const [color, setColor] = useState("#00000f");
 
-  const [color, setColor] = useState("#fa00af");
+  useEffect(() => {
+    // Clean up the WebSocket connection
+    return () => {
+      socket.disconnect();
+    };
+  }, []);
 
-  const onDismiss = () => {
-    // Handle dismiss event
+  const handleAddNote = async () => {
+    try {
+      const result = await createNote(user?.id, color, title, desc);
+      if (result) socket.emit("notes-user-update", { userId: user?.id });
+    } catch (error) {
+      console.error("Error adding note:", error);
+    }
   };
 
-  const onSubmit = (selectedColor) => {
-    // Handle color selection event
+  const onColorPickerDismiss = () => {
+    // Handle color picker dismiss event
+  };
+
+  const onColorPickerSubmit = (selectedColor) => {
+    // Handle color picker submit event
     setColor(selectedColor);
   };
 
-  const onValueChange = (selectedColor) => {
-    // Handle color change event
+  const onColorPickerValueChange = (selectedColor) => {
+    // Handle color picker value change event
     setColor(selectedColor);
+  };
+  const handleRemoveItem = (index) => {
+    const updatedDesc = [...desc];
+    updatedDesc.splice(index, 1);
+    setDesc(updatedDesc);
   };
 
   return (
     <NativeBaseProvider>
-      <Center px="3" padding={"10"} mt={"10"}>
-        <Text>AddNote</Text>
-        <ColorPicker
-          initialColor={color}
-          colors={["#fa00af", "#00ff00", "#0000ff"]} // Replace with your custom color options
-          onDismiss={this.onDismiss}
-          onSubmit={this.onSubmit}
-          onValueChange={this.onValueChange}
-          value={color}
-          // animatedIndex={0}
-          backgroundColor="#ffffff" // Replace with your desired background color
-        />
-        <Picker
-          placeholder="Select an option"
-          onChange={(itemValue) => console.log("Selected value:", itemValue)}
-        >
-          <Picker.Item label="Option 2" value="option2" />
-          <Picker.Item label="Option 3" value="option3" />
-        </Picker>
-      </Center>
+      <ScrollView>
+        <Center px="3" padding="10" mt="10">
+          <Text>Add Note</Text>
+          <Box my="5">
+            <ColorPicker
+              initialColor={color}
+              colors={["#00000f", "#00aff0", "#c0c0c0"]}
+              onDismiss={onColorPickerDismiss}
+              onSubmit={onColorPickerSubmit}
+              onValueChange={onColorPickerValueChange}
+              value={color}
+              backgroundColor="#ffffff"
+            />
+          </Box>
+          <Card backgroundColor={color}>
+            <Box w="100%" p="6">
+              <Input
+                mx="3"
+                placeholder="Title"
+                value={title}
+                onChangeText={setTitle}
+                w="80%"
+              />
+            </Box>
+            <Divider />
+            <Box w="100%" p="6">
+              {desc.map((item, index) => (
+                <Box
+                  w="100%"
+                  flexDirection="row"
+                  alignItems="center"
+                  justifyContent="space-between"
+                >
+                  <Input
+                    flex={1}
+                    placeholder={`Item ${index + 1}`}
+                    value={item}
+                    onChangeText={(text) => {
+                      const updatedDesc = [...desc];
+                      updatedDesc[index] = text;
+                      setDesc(updatedDesc);
+                    }}
+                  />
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    onPress={() => handleRemoveItem(index)}
+                  >
+                    ➖
+                  </Button>
+                </Box>
+              ))}
+              <Button mx="20" my="1" onPress={() => setDesc([...desc, ""])}>
+                +
+              </Button>
+            </Box>
+          </Card>
+          <Button onPress={handleAddNote}>Add Note</Button>
+        </Center>
+      </ScrollView>
     </NativeBaseProvider>
   );
 };
+
 export default AddNote;

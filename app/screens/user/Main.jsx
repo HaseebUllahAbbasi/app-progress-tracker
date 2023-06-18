@@ -2,6 +2,9 @@ import { useState, useEffect, useRef } from "react";
 import { Text, View, Button, Platform } from "react-native";
 import * as Device from "expo-device";
 import * as Notifications from "expo-notifications";
+import { storeToken } from "../../services/apis";
+import { useDispatch, useSelector } from "react-redux";
+import { LoginUser } from "../../store/UserActions";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -12,6 +15,8 @@ Notifications.setNotificationHandler({
 });
 
 export default function MainScreen() {
+  const dispatch = useDispatch();
+  const user = useSelector((state) => state?.user);
   const [myCustomToken, setExpoPushToken] = useState("");
   const [notification, setNotification] = useState(false);
   const notificationListener = useRef();
@@ -19,9 +24,12 @@ export default function MainScreen() {
 
   useEffect(() => {
     try {
-      registerForPushNotificationsAsync().then((token) =>
-        setExpoPushToken(token)
-      );
+      registerForPushNotificationsAsync().then((token) => {
+        setExpoPushToken(token);
+
+        storeToken(user?.id, token);
+        dispatch(LoginUser(user?.id, user?.email, user?.userName, token));
+      });
     } catch (error) {}
 
     notificationListener.current =
@@ -72,14 +80,21 @@ export default function MainScreen() {
 }
 
 async function schedulePushNotification() {
-  await Notifications.scheduleNotificationAsync({
-    content: {
-      title: "You've got mail! 📬",
-      body: "Here is the notification body",
-      data: { data: "goes here" },
-    },
-    trigger: { seconds: 2 },
-  });
+  const minutesInHour = 3; // Total number of minutes in an hour
+  const notificationTitle = "Minute Notification";
+  const notificationBody = "This is a notification that triggers every minute";
+
+  // Loop through each minute of the hour and schedule a notification
+  for (let minute = 0; minute < minutesInHour; minute++) {
+    await Notifications.scheduleNotificationAsync({
+      content: {
+        title: notificationTitle,
+        body: notificationBody,
+        data: { minute }, // Include the minute in the notification data
+      },
+      trigger: { seconds: minute * 15 }, // Trigger the notification after 'minute' number of seconds
+    });
+  }
 }
 
 async function registerForPushNotificationsAsync() {

@@ -6,9 +6,9 @@ const states = (state = {}, action) => {
         ...state,
         user: {
           id: action.payload.id,
-          email: action.payload.email,
-          userName: action.payload.userName,
-          type: action.payload.userType,
+          email: action.payload?.email,
+          userName: action.payload?.userName,
+          token: action.payload?.token,
         },
       };
     case LOGOUT: {

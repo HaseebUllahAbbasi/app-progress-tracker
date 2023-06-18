@@ -13,8 +13,14 @@ import {
 import { ColorPicker } from "react-native-ui-lib";
 import { useState } from "react";
 import { ScrollView } from "react-native-gesture-handler";
+import { io } from "socket.io-client";
+import { useEffect } from "react";
+import { SERVER, getNotesByUser } from "../../../services/apis";
+import { useSelector } from "react-redux";
 
 const Notes = ({ navigation, route }) => {
+  const user = useSelector((state) => state?.user);
+
   const [title, setTitle] = useState("");
 
   const [desc, setDesc] = useState([]);
@@ -49,7 +55,22 @@ const Notes = ({ navigation, route }) => {
       createdAt: new Date(),
     },
   ]);
-
+  const socket = io(SERVER);
+  const fetchNotesByUser = async () => {
+    if (user) {
+      setData(await getNotesByUser(user?.id));
+    }
+  };
+  useEffect(() => {
+    if (user?.id) fetchNotesByUser();
+    // Clean up the WebSocket connection
+    socket.on("get-notes-user", (updatedData) => {
+      setData(updatedData);
+    });
+    return () => {
+      socket.disconnect();
+    };
+  }, []);
   return (
     <NativeBaseProvider>
       <Center px="3" padding={"10"} mt={"10"}>
