@@ -65,7 +65,6 @@ const Login = ({ navigation }) => {
           onPress={async () => {
             const data = await login(userName, password);
             if (data) {
-              console.log(data);
               dispatch(
                 LoginUser(data._id, data.email, data.username, data?.token)
               );

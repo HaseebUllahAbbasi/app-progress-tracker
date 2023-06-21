@@ -15,7 +15,7 @@ import { Card, ColorPicker } from "react-native-ui-lib";
 import { SERVER, createNote } from "../../../services/apis";
 import { useDispatch, useSelector } from "react-redux";
 
-const AddNote = () => {
+const AddNote = ({ navigation }) => {
   const user = useSelector((state) => state?.user);
   const [title, setTitle] = useState("");
   const [desc, setDesc] = useState([""]);
@@ -33,6 +33,7 @@ const AddNote = () => {
     try {
       const result = await createNote(user?.id, color, title, desc);
       if (result) socket.emit("notes-user-update", { userId: user?.id });
+      navigation.goBack(null);
     } catch (error) {
       console.error("Error adding note:", error);
     }
@@ -87,6 +88,7 @@ const AddNote = () => {
             <Box w="100%" p="6">
               {desc.map((item, index) => (
                 <Box
+                  key={index}
                   w="100%"
                   flexDirection="row"
                   alignItems="center"

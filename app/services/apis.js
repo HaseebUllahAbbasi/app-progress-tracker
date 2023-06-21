@@ -1,7 +1,6 @@
 export const SERVER = "http://192.168.100.3:4000";
 import axios from "axios";
 export const testServer = async () => {
-  console.log("this is ok ");
   const result = await axios
     .get(SERVER)
     .then((res) => console.log(res.data))
@@ -27,7 +26,6 @@ export const storeToken = async (userId, expoPushToken) => {
       console.log(e);
     });
   if (result) {
-    console.log(result, "from token saved");
     return result;
   } else return undefined;
 };
@@ -47,7 +45,27 @@ export const getNotesByUser = async (userId) => {
     .get(`${SERVER}/api/notes/${userId}`)
     .then((res) => res.data);
   if (result) {
-    console.log(result);
+    return result;
+  }
+};
+
+export const editNote = async ({ noteId, userId, color, title, desc }) => {
+  const result = await axios
+    .put(`${SERVER}/api/notes/${noteId}`, {
+      userId: userId,
+      heading: title,
+      items: desc,
+      color: color,
+    })
+    .then((res) => res.data);
+  if (result) {
+    return result;
+  }
+};
+
+export const deleteNote = async (noteId) => {
+  const result = await axios.delete(SERVER + "/api/notes/" + noteId);
+  if (result) {
     return result;
   }
 };
@@ -57,7 +75,6 @@ export const createNote = async (userId, color, title, desc) => {
     .post(`${SERVER}/api/notes`, { userId, heading: title, items: desc, color })
     .then((res) => res.data);
   if (result) {
-    console.log(result);
     return result;
   }
 };

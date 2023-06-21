@@ -11,19 +11,30 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.haseebullah00.app"
     },
     "android": {
-      "permissions": ["NOTIFICATIONS"],
+      "permissions": [
+        "NOTIFICATIONS"
+      ],
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.haseebullah00.app"
     },
     "web": {
       "favicon": "./asRsets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "3f6b9097-1d2a-467c-9780-2ac9e2258eff"
+      }
     }
   }
 }
